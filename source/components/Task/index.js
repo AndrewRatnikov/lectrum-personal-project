@@ -1,8 +1,8 @@
 // Core
-import React, { PureComponent } from 'react';
+import React, { PureComponent } from "react";
 
 // Instruments
-import Styles from './styles.m.css';
+import Styles from "./styles.m.css";
 
 export default class Task extends PureComponent {
     _getTaskShape = ({
