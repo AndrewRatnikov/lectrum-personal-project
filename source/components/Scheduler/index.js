@@ -23,7 +23,15 @@ export default class Scheduler extends Component {
         this.setState({ tasksFilter: value.toLowerCase() });
     };
 
+    _updateNewTaskMessage = (event) => {
+        const { value } = event.target;
+
+        this.setState({ newTaskMessage: value });
+    };
+
     render () {
+        const { tasksFilter, newTaskMessage } = this.state;
+
         return (
             <section className = { Styles.scheduler }>
                 <main>
@@ -32,13 +40,18 @@ export default class Scheduler extends Component {
                         <input
                             placeholder = 'Search'
                             type = 'search'
-                            value = { this.state.tasksFilter }
+                            value = { tasksFilter }
                             onChange = { this._updateTasksFilter }
                         />
                     </header>
                     <section>
                         <form>
-                            <input placeholder = 'Type new task' type = 'text' />
+                            <input
+                                placeholder = 'Type new task'
+                                type = 'text'
+                                value = { newTaskMessage }
+                                onChange = { this._updateNewTaskMessage }
+                            />
                             <button>Add task</button>
                         </form>
                         <ul>
