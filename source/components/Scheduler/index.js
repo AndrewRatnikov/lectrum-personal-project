@@ -10,13 +10,31 @@ import Checkbox from "../../theme/assets/Checkbox";
 import Task from "../Task";
 
 export default class Scheduler extends Component {
+    state = {
+        newTaskMessage:  "",
+        tasksFilter:     "",
+        isTasksFetching: false,
+        tasks:           [],
+    };
+
+    _updateTasksFilter = (event) => {
+        const { value } = event.target;
+
+        this.setState({ tasksFilter: value.toLowerCase() });
+    };
+
     render () {
         return (
             <section className = { Styles.scheduler }>
                 <main>
                     <header>
                         <h1>Task Manager</h1>
-                        <input placeholder = 'Search' type = 'search' />
+                        <input
+                            placeholder = 'Search'
+                            type = 'search'
+                            value = { this.state.tasksFilter }
+                            onChange = { this._updateTasksFilter }
+                        />
                     </header>
                     <section>
                         <form>
