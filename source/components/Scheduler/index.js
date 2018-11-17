@@ -35,17 +35,22 @@ export default class Scheduler extends Component {
         this.setState((prevState) => ({
             newTaskMessage: "",
             tasks:          [
-                ...prevState.tasks,
                 {
-                    ...new BaseTaskModel(this.state.newTaskMessage),
+                    ...new BaseTaskModel(
+                        undefined,
+                        undefined,
+                        undefined,
+                        this.state.newTaskMessage
+                    ),
                     created: new Date(),
-                }
+                },
+                ...prevState.tasks
             ],
         }));
     };
 
     render () {
-        const { tasksFilter, newTaskMessage } = this.state;
+        const { tasksFilter, newTaskMessage, tasks } = this.state;
 
         return (
             <section className = { Styles.scheduler }>
@@ -70,7 +75,9 @@ export default class Scheduler extends Component {
                             <button>Add task</button>
                         </form>
                         <ul>
-                            <Task />
+                            {tasks.map((task) => (
+                                <Task key = { task.id } { ...task } />
+                            ))}
                         </ul>
                     </section>
                     <footer>

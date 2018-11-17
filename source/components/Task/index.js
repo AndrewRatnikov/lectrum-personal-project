@@ -11,6 +11,12 @@ import Edit from "../../theme/assets/Edit";
 import Star from "../../theme/assets/Star";
 
 export default class Task extends PureComponent {
+    constructor (props) {
+        super(props);
+        console.log(props);
+        this.state = this._getTaskShape(props);
+    }
+
     _getTaskShape = ({
         id = this.props.id,
         completed = this.props.completed,
@@ -32,7 +38,7 @@ export default class Task extends PureComponent {
                         color1 = '#3b8ef3'
                         color2 = '#fff'
                     />
-                    <input disabled type = 'text' value = { "task 1" } />
+                    <input disabled type = 'text' value = { this.state.message } />
                 </div>
                 <div className = { Styles.actions }>
                     <Star
