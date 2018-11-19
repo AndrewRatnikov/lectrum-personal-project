@@ -49,6 +49,16 @@ export default class Scheduler extends Component {
         }));
     };
 
+    _toggleTaskField = (id) => (field) => () => {
+        this.setState((prevState) => {
+            const tasks = [...prevState.tasks];
+
+            tasks[id][field] = !prevState.tasks[id][field];
+
+            return tasks;
+        });
+    };
+
     render () {
         const { tasksFilter, newTaskMessage, tasks } = this.state;
 
@@ -75,8 +85,12 @@ export default class Scheduler extends Component {
                             <button>Add task</button>
                         </form>
                         <ul>
-                            {tasks.map((task) => (
-                                <Task key = { task.id } { ...task } />
+                            {tasks.map((task, id) => (
+                                <Task
+                                    key = { task.id }
+                                    onCheckedHandler = { this._toggleTaskField(id) }
+                                    { ...task }
+                                />
                             ))}
                         </ul>
                     </section>

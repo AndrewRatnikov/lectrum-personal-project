@@ -11,9 +11,17 @@ import Edit from "../../theme/assets/Edit";
 import Star from "../../theme/assets/Star";
 
 export default class Task extends PureComponent {
+    static getDerivedStateFromProps (props) {
+        const { completed, favorite } = props;
+
+        return {
+            completed,
+            favorite,
+        };
+    }
+
     constructor (props) {
         super(props);
-        console.log(props);
         this.state = this._getTaskShape(props);
     }
 
@@ -30,22 +38,29 @@ export default class Task extends PureComponent {
     });
 
     render () {
+        const { onCheckedHandler } = this.props;
+        const { completed, favorite } = this.state;
+
         return (
             <li className = { Styles.task }>
                 <div className = { Styles.content }>
                     <Checkbox
+                        checked = { completed }
                         className = { Styles.toggleTaskCompletedState }
                         color1 = '#3b8ef3'
                         color2 = '#fff'
+                        onClick = { onCheckedHandler("completed") }
                     />
                     <input disabled type = 'text' value = { this.state.message } />
                 </div>
                 <div className = { Styles.actions }>
                     <Star
                         inlineBlock
+                        checked = { favorite }
                         className = { Styles.toggleTaskFavoriteState }
                         color1 = '#3b8ef3'
                         color2 = '#000'
+                        onClick = { onCheckedHandler("favorite") }
                     />
                     <Edit
                         inlineBlock
