@@ -30,11 +30,16 @@ export default class Scheduler extends Component {
             return;
         }
 
-        this.setState({ newTaskMessage: value });
+        this.setState({ newTaskMessage: value.toLowerCase() });
     };
 
     _createTask = (event) => {
         event.preventDefault();
+        const { newTaskMessage } = this.state;
+
+        if (!newTaskMessage.length) {
+            return;
+        }
 
         this.setState((prevState) => ({
             newTaskMessage: "",
@@ -44,7 +49,7 @@ export default class Scheduler extends Component {
                         undefined,
                         undefined,
                         undefined,
-                        this.state.newTaskMessage
+                        newTaskMessage
                     ),
                     created: new Date(),
                 },
