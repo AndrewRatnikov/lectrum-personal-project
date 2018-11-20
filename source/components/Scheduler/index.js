@@ -26,6 +26,10 @@ export default class Scheduler extends Component {
     _updateNewTaskMessage = (event) => {
         const { value } = event.target;
 
+        if (value.length > 50) {
+            return;
+        }
+
         this.setState({ newTaskMessage: value });
     };
 
