@@ -4,7 +4,7 @@ import React, { Component } from "react";
 // Instruments
 import Styles from "./styles.m.css";
 import { api } from "../../REST"; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
-import { BaseTaskModel } from "../../instruments/helpers";
+import { BaseTaskModel, sortTasksByGroup } from "../../instruments/helpers";
 
 // Components
 import Checkbox from "../../theme/assets/Checkbox";
@@ -41,9 +41,8 @@ export default class Scheduler extends Component {
             return;
         }
 
-        this.setState((prevState) => ({
-            newTaskMessage: "",
-            tasks:          [
+        this.setState((prevState) => {
+            const tasks = [
                 {
                     ...new BaseTaskModel(
                         undefined,
@@ -54,8 +53,13 @@ export default class Scheduler extends Component {
                     created: new Date(),
                 },
                 ...prevState.tasks
-            ],
-        }));
+            ];
+
+            return {
+                newTaskMessage: "",
+                tasks:          sortTasksByGroup(tasks),
+            };
+        });
     };
 
     _toggleTaskField = (id) => (field) => () => {
@@ -64,7 +68,7 @@ export default class Scheduler extends Component {
 
             tasks[id][field] = !prevState.tasks[id][field];
 
-            return tasks;
+            return { tasks: sortTasksByGroup(tasks) };
         });
     };
 
