@@ -62,6 +62,16 @@ export default class Scheduler extends Component {
         });
     };
 
+    _deleteTask = (id) => () => {
+        this.setState((prevState) => {
+            const tasks = [...prevState.tasks];
+
+            tasks.splice(id, 1);
+
+            return { tasks };
+        });
+    };
+
     _toggleTaskField = (id) => (field) => () => {
         this.setState((prevState) => {
             const tasks = [...prevState.tasks];
@@ -102,6 +112,7 @@ export default class Scheduler extends Component {
                                 <Task
                                     key = { task.id }
                                     onCheckedHandler = { this._toggleTaskField(id) }
+                                    onDeleteHandler = { this._deleteTask(id) }
                                     { ...task }
                                 />
                             ))}

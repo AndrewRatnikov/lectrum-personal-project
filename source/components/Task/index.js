@@ -1,5 +1,6 @@
 // Core
 import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
 
 // Instruments
 import Styles from "./styles.m.css";
@@ -20,6 +21,15 @@ export default class Task extends PureComponent {
         };
     }
 
+    static propTypes = {
+        completed:        PropTypes.bool.isRequired,
+        favorite:         PropTypes.bool.isRequired,
+        id:               PropTypes.string.isRequired,
+        message:          PropTypes.string.isRequired,
+        onCheckedHandler: PropTypes.func.isRequired,
+        onDeleteHandler:  PropTypes.func.isRequired,
+    };
+
     constructor (props) {
         super(props);
         this.state = this._getTaskShape(props);
@@ -38,7 +48,7 @@ export default class Task extends PureComponent {
     });
 
     render () {
-        const { onCheckedHandler } = this.props;
+        const { onCheckedHandler, onDeleteHandler } = this.props;
         const { completed, favorite } = this.state;
 
         return (
@@ -68,7 +78,12 @@ export default class Task extends PureComponent {
                         color1 = '#3b8ef3'
                         color2 = '#000'
                     />
-                    <Remove inlineBlock color1 = '#3b8ef3' color2 = '#000' />
+                    <Remove
+                        inlineBlock
+                        color1 = '#3b8ef3'
+                        color2 = '#000'
+                        onClick = { onDeleteHandler }
+                    />
                 </div>
             </li>
         );
