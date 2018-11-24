@@ -32,8 +32,14 @@ export default class Task extends PureComponent {
 
     constructor (props) {
         super(props);
-        this.state = this._getTaskShape(props);
+        this.state = {
+            ...this._getTaskShape(props),
+            disabled: true,
+        };
     }
+
+    _toggleEditCreatedTask = () =>
+        this.setState((prevState) => ({ disabled: !prevState.disabled }));
 
     _getTaskShape = ({
         id = this.props.id,
@@ -49,7 +55,7 @@ export default class Task extends PureComponent {
 
     render () {
         const { onCheckedHandler, onDeleteHandler } = this.props;
-        const { completed, favorite } = this.state;
+        const { completed, favorite, disabled } = this.state;
 
         return (
             <li className = { Styles.task }>
@@ -61,7 +67,11 @@ export default class Task extends PureComponent {
                         color2 = '#fff'
                         onClick = { onCheckedHandler("completed") }
                     />
-                    <input disabled type = 'text' value = { this.state.message } />
+                    <input
+                        disabled = { disabled }
+                        type = 'text'
+                        value = { this.state.message }
+                    />
                 </div>
                 <div className = { Styles.actions }>
                     <Star
@@ -77,6 +87,7 @@ export default class Task extends PureComponent {
                         className = { Styles.updateTaskMessageOnClick }
                         color1 = '#3b8ef3'
                         color2 = '#000'
+                        onClick = { this._toggleEditCreatedTask }
                     />
                     <Remove
                         inlineBlock
