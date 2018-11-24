@@ -57,3 +57,5 @@ export class BaseTaskModel {
         this.message = message;
     }
 }
+
+export const checkLengthHigherFifty = (value) => value.length > 50;
