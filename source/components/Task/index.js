@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 // Instruments
 import Styles from "./styles.m.css";
+import { checkLengthHigherFifty } from '../../instruments/helpers';
 
 // Components
 import Checkbox from "../../theme/assets/Checkbox";
@@ -38,8 +39,17 @@ export default class Task extends PureComponent {
         };
     }
 
-    _toggleEditCreatedTask = () =>
+    _onEditTaskHandler = (event) => {
+        const { value } = event.target;
+
+        if (checkLengthHigherFifty(value)) return;
+
+        this.setState({ message: value });
+    };
+
+    _toggleEditCreatedTask = () => {
         this.setState((prevState) => ({ disabled: !prevState.disabled }));
+    };
 
     _getTaskShape = ({
         id = this.props.id,
@@ -71,6 +81,7 @@ export default class Task extends PureComponent {
                         disabled = { disabled }
                         type = 'text'
                         value = { this.state.message }
+                        onChange = { this._onEditTaskHandler }
                     />
                 </div>
                 <div className = { Styles.actions }>

@@ -4,7 +4,11 @@ import React, { Component } from "react";
 // Instruments
 import Styles from "./styles.m.css";
 import { api } from "../../REST"; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
-import { BaseTaskModel, sortTasksByGroup } from "../../instruments/helpers";
+import {
+    BaseTaskModel,
+    sortTasksByGroup,
+    checkLengthHigherFifty
+} from "../../instruments/helpers";
 
 // Components
 import Checkbox from "../../theme/assets/Checkbox";
@@ -26,7 +30,7 @@ export default class Scheduler extends Component {
     _updateNewTaskMessage = (event) => {
         const { value } = event.target;
 
-        if (value.length > 50) {
+        if (checkLengthHigherFifty) {
             return;
         }
 
@@ -61,6 +65,8 @@ export default class Scheduler extends Component {
             };
         });
     };
+
+    _saveEditTask = (id) => (event) => {};
 
     _deleteTask = (id) => () => {
         this.setState((prevState) => {
