@@ -30,7 +30,7 @@ export default class Scheduler extends Component {
     _updateNewTaskMessage = (event) => {
         const { value } = event.target;
 
-        if (checkLengthHigherFifty) {
+        if (checkLengthHigherFifty(value)) {
             return;
         }
 
@@ -66,7 +66,16 @@ export default class Scheduler extends Component {
         });
     };
 
-    _saveEditTask = (id) => (event) => {};
+    _saveEditTask = (id) => (message) => {
+        this.setState((prevState) => {
+            const tasks = [...prevState.tasks];
+
+            tasks[id].message = message;
+            tasks[id].created = new Date();
+
+            return { tasks };
+        });
+    };
 
     _deleteTask = (id) => () => {
         this.setState((prevState) => {
@@ -119,6 +128,7 @@ export default class Scheduler extends Component {
                                     key = { task.id }
                                     onCheckedHandler = { this._toggleTaskField(id) }
                                     onDeleteHandler = { this._deleteTask(id) }
+                                    onSaveHandler = { this._saveEditTask(id) }
                                     { ...task }
                                 />
                             ))}
