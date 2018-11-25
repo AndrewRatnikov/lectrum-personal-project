@@ -2,5 +2,6 @@ export {
     getDisplayName,
     sortTasksByDate,
     sortTasksByGroup,
-    BaseTaskModel
+    BaseTaskModel,
+    checkLengthHigherFifty
 } from "./helpers";

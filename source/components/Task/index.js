@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 // Instruments
 import Styles from "./styles.m.css";
-import { checkLengthHigherFifty } from "../../instruments/helpers";
+import { checkLengthHigherFifty } from "../../instruments";
 
 // Components
 import Checkbox from "../../theme/assets/Checkbox";

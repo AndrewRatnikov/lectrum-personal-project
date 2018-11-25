@@ -8,7 +8,7 @@ import {
     BaseTaskModel,
     sortTasksByGroup,
     checkLengthHigherFifty
-} from "../../instruments/helpers";
+} from "../../instruments";
 
 // Components
 import Checkbox from "../../theme/assets/Checkbox";
@@ -24,7 +24,7 @@ export default class Scheduler extends Component {
     _updateTasksFilter = (event) => {
         const { value } = event.target;
 
-        this.setState({ tasksFilter: value.toLowerCase() });
+        this.setState({ tasksFilter: value });
     };
 
     _updateNewTaskMessage = (event) => {
@@ -34,7 +34,7 @@ export default class Scheduler extends Component {
             return;
         }
 
-        this.setState({ newTaskMessage: value.toLowerCase() });
+        this.setState({ newTaskMessage: value });
     };
 
     _createTask = (event) => {
@@ -98,7 +98,7 @@ export default class Scheduler extends Component {
     };
 
     render () {
-        const { tasksFilter, newTaskMessage, tasks } = this.state;
+        const { tasksFilter, newTaskMessage, tasks, fi } = this.state;
 
         return (
             <section className = { Styles.scheduler }>
@@ -123,15 +123,23 @@ export default class Scheduler extends Component {
                             <button>Add task</button>
                         </form>
                         <ul>
-                            {tasks.map((task, id) => (
-                                <Task
-                                    key = { task.id }
-                                    onCheckedHandler = { this._toggleTaskField(id) }
-                                    onDeleteHandler = { this._deleteTask(id) }
-                                    onSaveHandler = { this._saveEditTask(id) }
-                                    { ...task }
-                                />
-                            ))}
+                            {tasks
+                                .filter((task) =>
+                                    task.message
+                                        .toLowerCase()
+                                        .includes(tasksFilter.toLowerCase())
+                                )
+                                .map((task, id) => (
+                                    <Task
+                                        key = { task.id }
+                                        onCheckedHandler = { this._toggleTaskField(
+                                            id
+                                        ) }
+                                        onDeleteHandler = { this._deleteTask(id) }
+                                        onSaveHandler = { this._saveEditTask(id) }
+                                        { ...task }
+                                    />
+                                ))}
                         </ul>
                     </section>
                     <footer>
