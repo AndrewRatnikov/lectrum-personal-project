@@ -97,6 +97,16 @@ export default class Scheduler extends Component {
         });
     };
 
+    _completeAllTasks = () => {
+        this.setState((prevState) => ({
+            tasks: prevState.tasks.map((item) => {
+                item.completed = true;
+
+                return item;
+            }),
+        }));
+    };
+
     render () {
         const { tasksFilter, newTaskMessage, tasks, fi } = this.state;
 
@@ -143,7 +153,11 @@ export default class Scheduler extends Component {
                         </ul>
                     </section>
                     <footer>
-                        <Checkbox color1 = '#363636' color2 = '#fff' />
+                        <Checkbox
+                            color1 = '#363636'
+                            color2 = '#fff'
+                            onClick = { this._completeAllTasks }
+                        />
                         <span className = { Styles.completeAllTasks }>
                             Complete all tasks
                         </span>
