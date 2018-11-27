@@ -1,5 +1,6 @@
 // Core
 import React, { Component } from "react";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 // Instruments
 import Styles from "./styles.m.css";
@@ -13,6 +14,21 @@ import {
 // Components
 import Checkbox from "../../theme/assets/Checkbox";
 import Task from "../Task";
+
+const taskClassNames = {
+    appear: {
+        enter:       Styles.fadeEnter,
+        enterActive: Styles.fadeEnterActive,
+        exit:        Styles.fadeExit,
+        exitActive:  Styles.fadeExitActive,
+    },
+    change: {
+        enter:       Styles.moveEnter,
+        enterActive: Styles.moveEnterActive,
+        exit:        Styles.moveExit,
+        exitActive:  Styles.moveExitActive,
+    },
+};
 
 export default class Scheduler extends Component {
     state = {
@@ -132,7 +148,7 @@ export default class Scheduler extends Component {
                             />
                             <button>Add task</button>
                         </form>
-                        <ul>
+                        <TransitionGroup component = 'ul'>
                             {tasks
                                 .filter((task) =>
                                     task.message
@@ -140,17 +156,26 @@ export default class Scheduler extends Component {
                                         .includes(tasksFilter.toLowerCase())
                                 )
                                 .map((task, id) => (
-                                    <Task
+                                    <CSSTransition
+                                        unmountOnExit
+                                        classNames = { taskClassNames.appear }
                                         key = { task.id }
-                                        onCheckedHandler = { this._toggleTaskField(
-                                            id
-                                        ) }
-                                        onDeleteHandler = { this._deleteTask(id) }
-                                        onSaveHandler = { this._saveEditTask(id) }
-                                        { ...task }
-                                    />
+                                        timeout = { 500 }>
+                                        <Task
+                                            onCheckedHandler = { this._toggleTaskField(
+                                                id
+                                            ) }
+                                            onDeleteHandler = { this._deleteTask(
+                                                id
+                                            ) }
+                                            onSaveHandler = { this._saveEditTask(
+                                                id
+                                            ) }
+                                            { ...task }
+                                        />
+                                    </CSSTransition>
                                 ))}
-                        </ul>
+                        </TransitionGroup>
                     </section>
                     <footer>
                         <Checkbox
