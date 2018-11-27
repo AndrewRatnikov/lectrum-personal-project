@@ -16,18 +16,10 @@ import Checkbox from "../../theme/assets/Checkbox";
 import Task from "../Task";
 
 const taskClassNames = {
-    appear: {
-        enter:       Styles.fadeEnter,
-        enterActive: Styles.fadeEnterActive,
-        exit:        Styles.fadeExit,
-        exitActive:  Styles.fadeExitActive,
-    },
-    change: {
-        enter:       Styles.moveEnter,
-        enterActive: Styles.moveEnterActive,
-        exit:        Styles.moveExit,
-        exitActive:  Styles.moveExitActive,
-    },
+    enter:       Styles.fadeEnter,
+    enterActive: Styles.fadeEnterActive,
+    exit:        Styles.fadeExit,
+    exitActive:  Styles.fadeExitActive,
 };
 
 export default class Scheduler extends Component {
@@ -158,7 +150,7 @@ export default class Scheduler extends Component {
                                 .map((task, id) => (
                                     <CSSTransition
                                         unmountOnExit
-                                        classNames = { taskClassNames.appear }
+                                        classNames = { taskClassNames }
                                         key = { task.id }
                                         timeout = { 500 }>
                                         <Task
