@@ -38,6 +38,7 @@ export default class Task extends PureComponent {
             ...this._getTaskShape(props),
             editing: false,
         };
+        this.taskRef = React.createRef();
     }
 
     _editTaskHandler = (event) => {
@@ -51,16 +52,24 @@ export default class Task extends PureComponent {
     };
 
     _toggleEditCreatedTask = () => {
-        this.setState((prevState) => {
-            const message = prevState.message.length
-                ? prevState.message
-                : this.props.message;
+        this.setState(
+            (prevState) => {
+                const message = prevState.message.length
+                    ? prevState.message
+                    : this.props.message;
 
-            return {
-                editing: !prevState.editing,
-                message,
-            };
-        });
+                return {
+                    editing: !prevState.editing,
+                    message,
+                };
+            },
+            () => {
+                console.log(this.taskRef);
+                if (this.state.editing) {
+                    this.taskRef.current.focus();
+                }
+            }
+        );
     };
 
     _updateTaskHandler = (event) => {
@@ -124,6 +133,7 @@ export default class Task extends PureComponent {
                     />
                     <input
                         disabled = { !editing }
+                        ref = { this.taskRef }
                         type = 'text'
                         value = { this.state.message }
                         onChange = { this._editTaskHandler }
