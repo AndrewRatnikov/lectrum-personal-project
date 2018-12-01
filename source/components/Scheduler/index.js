@@ -14,12 +14,29 @@ import {
 // Components
 import Checkbox from "../../theme/assets/Checkbox";
 import Task from "../Task";
+import Spinner from "../Spinner";
 
 export default class Scheduler extends Component {
     state = {
         newTaskMessage: "",
         tasksFilter:    "",
         tasks:          [],
+        fetching:       false,
+    };
+
+    componentDidMount () {
+        this._fetchTasksAsync();
+    }
+
+    _fetchTasksAsync = async () => {
+        try {
+            this.setState({ fetching: true });
+            const tasks = await api.fetchTasks();
+
+            this.setState({ tasks });
+        } finally {
+            this.setState({ fetching: false });
+        }
     };
 
     _updateTasksFilter = (event) => {
@@ -46,25 +63,24 @@ export default class Scheduler extends Component {
             return;
         }
 
-        this.setState((prevState) => {
-            const tasks = [
-                {
-                    ...new BaseTaskModel(
-                        undefined,
-                        undefined,
-                        undefined,
-                        newTaskMessage
-                    ),
-                    created: new Date(),
-                },
-                ...prevState.tasks
-            ];
+        this._createTaskAsync();
+    };
 
-            return {
-                newTaskMessage: "",
-                tasks:          sortTasksByGroup(tasks),
-            };
-        });
+    _createTaskAsync = async () => {
+        try {
+            this.setState({ fetching: true });
+            const { newTaskMessage: message } = this.state;
+            const task = await api.createTask({ message });
+
+            console.log(task);
+            this.setState((prevState) => {
+                const tasks = [task, ...prevState.tasks];
+
+                return { tasks };
+            });
+        } finally {
+            this.setState({ fetching: false });
+        }
     };
 
     _saveEditTask = (id) => (message) => {
@@ -79,13 +95,32 @@ export default class Scheduler extends Component {
     };
 
     _deleteTask = (id) => () => {
-        this.setState((prevState) => {
-            const tasks = [...prevState.tasks];
+        this._deleteTaskAsync(id);
+        // this.setState((prevState) => {
+        //     const tasks = [...prevState.tasks];
 
-            tasks.splice(id, 1);
+        //     tasks.splice(id, 1);
 
-            return { tasks };
-        });
+        //     return { tasks };
+        // });
+    };
+
+    _deleteTaskAsync = async (id) => {
+        try {
+            const { tasks } = this.state;
+
+            this.setState({ fetching: true });
+            await api.deleteTask(tasks[id].id);
+            this.setState((prevState) => {
+                const tasks = [...prevState.tasks];
+
+                tasks.splice(id, 1);
+
+                return { tasks };
+            });
+        } finally {
+            this.setState({ fetching: false });
+        }
     };
 
     _toggleTaskField = (id) => (field) => () => {
@@ -109,13 +144,14 @@ export default class Scheduler extends Component {
     };
 
     render () {
-        const { tasksFilter, newTaskMessage, tasks, fi } = this.state;
+        const { tasksFilter, newTaskMessage, tasks, fetching } = this.state;
 
         return (
             <section className = { Styles.scheduler }>
                 <main>
                     <header>
                         <h1>Task Manager</h1>
+                        {fetching && <Spinner />}
                         <input
                             placeholder = 'Search'
                             type = 'search'
@@ -131,7 +167,7 @@ export default class Scheduler extends Component {
                                 value = { newTaskMessage }
                                 onChange = { this._updateNewTaskMessage }
                             />
-                            <button>Add task</button>
+                            <button disabled = { fetching }>Add task</button>
                         </form>
                         <FlipMove delay = { 100 } typeName = 'ul'>
                             {tasks

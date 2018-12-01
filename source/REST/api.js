@@ -17,53 +17,46 @@ export const api = Object.freeze({
         }
         const { data } = await response.json();
 
-        console.log(data);
-
         return data;
     },
     async createTask (data) {
         const response = await fetch(MAIN_URL, {
             method: "POST",
             headers,
-            data,
+            body:   JSON.stringify(data),
         });
 
         if (response.status !== 200) {
             throw new Error("Error: create task failed");
         }
-        const { data } = await response.json();
+        const { data: result } = await response.json();
 
-        console.log(data);
-
-        return data;
+        return result;
     },
     async updateTask (data) {
         const response = await fetch(MAIN_URL, {
-            method: "POST",
+            method: "PUT",
             headers,
-            data,
+            body:   JSON.stringify(data),
         });
 
         if (response.status !== 200) {
             throw new Error("Error: update task failed");
         }
-        const { data } = await response.json();
+        const { data: result } = await response.json();
 
-        console.log(data);
+        console.log(result);
 
-        return data;
+        return result;
     },
-    async deleteTask (data) {
-        const response = await fetch(MAIN_URL, {
-            method: "POST",
+    async deleteTask (id) {
+        const response = await fetch(`${MAIN_URL}/${id}`, {
+            method: "DELETE",
             headers,
-            data,
         });
 
-        if (response.status !== 200) {
-            throw new Error("Error: create task failed");
+        if (response.status !== 204) {
+            throw new Error("Error: delete task failed");
         }
-
-        console.log(response);
     },
 });
