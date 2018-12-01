@@ -45,8 +45,6 @@ export const api = Object.freeze({
         }
         const { data: result } = await response.json();
 
-        console.log(result);
-
         return result;
     },
     async deleteTask (id) {

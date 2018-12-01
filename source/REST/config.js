@@ -1,5 +1,5 @@
 const ROOT_URL = "https://lab.lectrum.io";
 const MAIN_URL = `${ROOT_URL}/hw/todo/api`;
-const TOKEN = "";
+const TOKEN = "v3k0P0IZaUVIoPc4";
 
 export { ROOT_URL, MAIN_URL, TOKEN };

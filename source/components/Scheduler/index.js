@@ -33,7 +33,7 @@ export default class Scheduler extends Component {
             this._showSpinner();
             const tasks = await api.fetchTasks();
 
-            this.setState({ tasks });
+            this.setState({ tasks: sortTasksByGroup(tasks) });
         } finally {
             this._hideSpinner();
         }
@@ -72,11 +72,10 @@ export default class Scheduler extends Component {
             const { newTaskMessage: message } = this.state;
             const task = await api.createTask({ message });
 
-            console.log(task);
             this.setState((prevState) => {
                 const tasks = [task, ...prevState.tasks];
 
-                return { tasks, newTaskMessage: "" };
+                return { tasks: sortTasksByGroup(tasks), newTaskMessage: "" };
             });
         } finally {
             this._hideSpinner();
@@ -97,16 +96,28 @@ export default class Scheduler extends Component {
             this._showSpinner();
             const changedTasks = await api.updateTask(tasks);
 
-            this.setState((prevState) => {
-                const updatedTasks = [...prevState.tasks];
-
-                updatedTasks[id] = changedTasks[0];
-
-                return { tasks: sortTasksByGroup(updatedTasks) };
-            });
+            if (Number.isInteger(id)) {
+                this._updateOneTask(id, changedTasks);
+            } else {
+                this._updateAllTask(changedTasks);
+            }
         } finally {
             this._hideSpinner();
         }
+    };
+
+    _updateOneTask = (id, tasks) => {
+        this.setState((prevState) => {
+            const updatedTasks = [...prevState.tasks];
+
+            updatedTasks[id] = tasks[0];
+
+            return { tasks: sortTasksByGroup(updatedTasks) };
+        });
+    };
+
+    _updateAllTask = (tasks) => {
+        this.setState({ tasks: sortTasksByGroup(tasks) });
     };
 
     _deleteTask = (id) => () => {
@@ -139,13 +150,22 @@ export default class Scheduler extends Component {
     };
 
     _completeAllTasks = () => {
-        this.setState((prevState) => ({
-            tasks: prevState.tasks.map((item) => {
-                item.completed = true;
+        const { tasks } = this.state;
+        const updatedTasks = tasks.map((item) => {
+            item.completed = true;
 
-                return item;
-            }),
-        }));
+            return item;
+        });
+
+        this._updateTaskAsync(null, updatedTasks);
+
+        // this.setState((prevState) => ({
+        //     tasks: prevState.tasks.map((item) => {
+        //         item.completed = true;
+
+        //         return item;
+        //     }),
+        // }));
     };
 
     render () {
