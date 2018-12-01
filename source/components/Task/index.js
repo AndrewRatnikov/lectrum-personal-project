@@ -64,7 +64,6 @@ export default class Task extends PureComponent {
                 };
             },
             () => {
-                console.log(this.taskRef);
                 if (this.state.editing) {
                     this.taskRef.current.focus();
                 }

@@ -1,6 +1,6 @@
 // Core
 import React, { Component } from "react";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
+import FlipMove from "react-flip-move";
 
 // Instruments
 import Styles from "./styles.m.css";
@@ -140,7 +140,7 @@ export default class Scheduler extends Component {
                             />
                             <button>Add task</button>
                         </form>
-                        <TransitionGroup component = 'ul'>
+                        <FlipMove delay = { 100 } typeName = 'ul'>
                             {tasks
                                 .filter((task) =>
                                     task.message
@@ -148,26 +148,17 @@ export default class Scheduler extends Component {
                                         .includes(tasksFilter.toLowerCase())
                                 )
                                 .map((task, id) => (
-                                    <CSSTransition
-                                        unmountOnExit
-                                        classNames = { taskClassNames }
+                                    <Task
                                         key = { task.id }
-                                        timeout = { 500 }>
-                                        <Task
-                                            onCheckedHandler = { this._toggleTaskField(
-                                                id
-                                            ) }
-                                            onDeleteHandler = { this._deleteTask(
-                                                id
-                                            ) }
-                                            onSaveHandler = { this._saveEditTask(
-                                                id
-                                            ) }
-                                            { ...task }
-                                        />
-                                    </CSSTransition>
+                                        onCheckedHandler = { this._toggleTaskField(
+                                            id
+                                        ) }
+                                        onDeleteHandler = { this._deleteTask(id) }
+                                        onSaveHandler = { this._saveEditTask(id) }
+                                        { ...task }
+                                    />
                                 ))}
-                        </TransitionGroup>
+                        </FlipMove>
                     </section>
                     <footer>
                         <Checkbox
