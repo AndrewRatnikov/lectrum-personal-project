@@ -15,13 +15,6 @@ import {
 import Checkbox from "../../theme/assets/Checkbox";
 import Task from "../Task";
 
-const taskClassNames = {
-    enter:       Styles.fadeEnter,
-    enterActive: Styles.fadeEnterActive,
-    exit:        Styles.fadeExit,
-    exitActive:  Styles.fadeExitActive,
-};
-
 export default class Scheduler extends Component {
     state = {
         newTaskMessage: "",
