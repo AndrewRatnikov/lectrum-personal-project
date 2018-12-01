@@ -5,11 +5,7 @@ import FlipMove from "react-flip-move";
 // Instruments
 import Styles from "./styles.m.css";
 import { api } from "../../REST"; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
-import {
-    BaseTaskModel,
-    sortTasksByGroup,
-    checkLengthHigherFifty
-} from "../../instruments";
+import { sortTasksByGroup, checkLengthHigherFifty } from "../../instruments";
 
 // Components
 import Checkbox from "../../theme/assets/Checkbox";
@@ -28,14 +24,18 @@ export default class Scheduler extends Component {
         this._fetchTasksAsync();
     }
 
+    _showSpinner = () => this.setState({ fetching: true });
+
+    _hideSpinner = () => this.setState({ fetching: false });
+
     _fetchTasksAsync = async () => {
         try {
-            this.setState({ fetching: true });
+            this._showSpinner();
             const tasks = await api.fetchTasks();
 
             this.setState({ tasks });
         } finally {
-            this.setState({ fetching: false });
+            this._hideSpinner();
         }
     };
 
@@ -68,7 +68,7 @@ export default class Scheduler extends Component {
 
     _createTaskAsync = async () => {
         try {
-            this.setState({ fetching: true });
+            this._showSpinner();
             const { newTaskMessage: message } = this.state;
             const task = await api.createTask({ message });
 
@@ -76,61 +76,66 @@ export default class Scheduler extends Component {
             this.setState((prevState) => {
                 const tasks = [task, ...prevState.tasks];
 
-                return { tasks };
+                return { tasks, newTaskMessage: "" };
             });
         } finally {
-            this.setState({ fetching: false });
+            this._hideSpinner();
         }
     };
 
     _saveEditTask = (id) => (message) => {
-        this.setState((prevState) => {
-            const tasks = [...prevState.tasks];
+        const { tasks } = this.state;
+        const task = { ...tasks[id] };
 
-            tasks[id].message = message;
-            tasks[id].created = new Date();
+        task.message = message;
 
-            return { tasks };
-        });
+        this._updateTaskAsync(id, [task]);
+    };
+
+    _updateTaskAsync = async (id, tasks) => {
+        try {
+            this._showSpinner();
+            const changedTasks = await api.updateTask(tasks);
+
+            this.setState((prevState) => {
+                const updatedTasks = [...prevState.tasks];
+
+                updatedTasks[id] = changedTasks[0];
+
+                return { tasks: sortTasksByGroup(updatedTasks) };
+            });
+        } finally {
+            this._hideSpinner();
+        }
     };
 
     _deleteTask = (id) => () => {
         this._deleteTaskAsync(id);
-        // this.setState((prevState) => {
-        //     const tasks = [...prevState.tasks];
-
-        //     tasks.splice(id, 1);
-
-        //     return { tasks };
-        // });
     };
 
     _deleteTaskAsync = async (id) => {
         try {
+            this._showSpinner();
             const { tasks } = this.state;
 
-            this.setState({ fetching: true });
             await api.deleteTask(tasks[id].id);
             this.setState((prevState) => {
-                const tasks = [...prevState.tasks];
+                const newTasks = [...prevState.tasks];
 
-                tasks.splice(id, 1);
+                newTasks.splice(id, 1);
 
-                return { tasks };
+                return { tasks: newTasks };
             });
         } finally {
-            this.setState({ fetching: false });
+            this._hideSpinner();
         }
     };
 
     _toggleTaskField = (id) => (field) => () => {
-        this.setState((prevState) => {
-            const tasks = [...prevState.tasks];
+        const task = { ...this.state.tasks[id] };
 
-            tasks[id][field] = !prevState.tasks[id][field];
-
-            return { tasks: sortTasksByGroup(tasks) };
-        });
+        task[field] = !this.state.tasks[id][field];
+        this._updateTaskAsync(id, [task]);
     };
 
     _completeAllTasks = () => {
