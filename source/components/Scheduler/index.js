@@ -24,18 +24,16 @@ export default class Scheduler extends Component {
         this._fetchTasksAsync();
     }
 
-    _showSpinner = () => this.setState({ fetching: true });
-
-    _hideSpinner = () => this.setState({ fetching: false });
+    _toggleSpinner = (show) => this.setState({ fetching: show });
 
     _fetchTasksAsync = async () => {
         try {
-            this._showSpinner();
+            this._toggleSpinner(true);
             const tasks = await api.fetchTasks();
 
             this.setState({ tasks: sortTasksByGroup(tasks) });
         } finally {
-            this._hideSpinner();
+            this._toggleSpinner(false);
         }
     };
 
@@ -68,7 +66,7 @@ export default class Scheduler extends Component {
 
     _createTaskAsync = async () => {
         try {
-            this._showSpinner();
+            this._toggleSpinner(true);
             const { newTaskMessage: message } = this.state;
             const task = await api.createTask({ message });
 
@@ -78,7 +76,7 @@ export default class Scheduler extends Component {
                 return { tasks: sortTasksByGroup(tasks), newTaskMessage: "" };
             });
         } finally {
-            this._hideSpinner();
+            this._toggleSpinner(false);
         }
     };
 
@@ -93,7 +91,7 @@ export default class Scheduler extends Component {
 
     _updateTaskAsync = async (id, tasks) => {
         try {
-            this._showSpinner();
+            this._toggleSpinner(true);
             const changedTasks = await api.updateTask(tasks);
 
             if (Number.isInteger(id)) {
@@ -102,7 +100,7 @@ export default class Scheduler extends Component {
                 this._updateAllTask(changedTasks);
             }
         } finally {
-            this._hideSpinner();
+            this._toggleSpinner(false);
         }
     };
 
@@ -126,7 +124,7 @@ export default class Scheduler extends Component {
 
     _deleteTaskAsync = async (id) => {
         try {
-            this._showSpinner();
+            this._toggleSpinner(true);
             const { tasks } = this.state;
 
             await api.deleteTask(tasks[id].id);
@@ -138,7 +136,7 @@ export default class Scheduler extends Component {
                 return { tasks: newTasks };
             });
         } finally {
-            this._hideSpinner();
+            this._toggleSpinner(false);
         }
     };
 
@@ -158,14 +156,6 @@ export default class Scheduler extends Component {
         });
 
         this._updateTaskAsync(null, updatedTasks);
-
-        // this.setState((prevState) => ({
-        //     tasks: prevState.tasks.map((item) => {
-        //         item.completed = true;
-
-        //         return item;
-        //     }),
-        // }));
     };
 
     render () {
