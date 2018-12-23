@@ -2,8 +2,8 @@
 import { combineReducers } from 'redux';
 
 // Reducers
-import { uiReducer } from '../bus/ui/reducer';
+import { uiReducer as ui } from '../bus/ui/reducer';
 
 export const rootReducer = combineReducers({
-    uiReducer,
+    ui,
 });

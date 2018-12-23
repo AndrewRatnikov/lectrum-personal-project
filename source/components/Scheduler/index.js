@@ -1,6 +1,7 @@
 // Core
 import React, { Component } from 'react';
 import FlipMove from 'react-flip-move';
+import { connect } from 'react-redux';
 
 // Instruments
 import Styles from './styles.m.css';
@@ -12,6 +13,7 @@ import Checkbox from '../../theme/assets/Checkbox';
 import Task from '../Task';
 import Spinner from '../Spinner';
 
+@connect((state) => ({ fetching: state.ui.isFetching }))
 export default class Scheduler extends Component {
     state = {
         newTaskMessage: '',
@@ -21,6 +23,7 @@ export default class Scheduler extends Component {
     };
 
     componentDidMount () {
+        console.log(this.props);
         this._fetchTasksAsync();
     }
 
