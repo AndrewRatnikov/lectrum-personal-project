@@ -1,21 +1,21 @@
 // Core
-import React, { Component } from "react";
-import FlipMove from "react-flip-move";
+import React, { Component } from 'react';
+import FlipMove from 'react-flip-move';
 
 // Instruments
-import Styles from "./styles.m.css";
-import { api } from "../../REST"; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
-import { sortTasksByGroup, checkLengthHigherFifty } from "../../instruments";
+import Styles from './styles.m.css';
+import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
+import { sortTasksByGroup, checkLengthHigherFifty } from '../../instruments';
 
 // Components
-import Checkbox from "../../theme/assets/Checkbox";
-import Task from "../Task";
-import Spinner from "../Spinner";
+import Checkbox from '../../theme/assets/Checkbox';
+import Task from '../Task';
+import Spinner from '../Spinner';
 
 export default class Scheduler extends Component {
     state = {
-        newTaskMessage: "",
-        tasksFilter:    "",
+        newTaskMessage: '',
+        tasksFilter:    '',
         tasks:          [],
         fetching:       false,
     };
@@ -71,9 +71,9 @@ export default class Scheduler extends Component {
             const task = await api.createTask({ message });
 
             this.setState((prevState) => {
-                const tasks = [task, ...prevState.tasks];
+                const tasks = [ task, ...prevState.tasks ];
 
-                return { tasks: sortTasksByGroup(tasks), newTaskMessage: "" };
+                return { tasks: sortTasksByGroup(tasks), newTaskMessage: '' };
             });
         } finally {
             this._toggleSpinner(false);
@@ -82,11 +82,11 @@ export default class Scheduler extends Component {
 
     _saveEditTask = (id) => (message) => {
         const { tasks } = this.state;
-        const task = { ...tasks[id] };
+        const task = { ...tasks[ id ] };
 
         task.message = message;
 
-        this._updateTaskAsync(id, [task]);
+        this._updateTaskAsync(id, [ task ]);
     };
 
     _updateTaskAsync = async (id, tasks) => {
@@ -106,9 +106,9 @@ export default class Scheduler extends Component {
 
     _updateOneTask = (id, tasks) => {
         this.setState((prevState) => {
-            const updatedTasks = [...prevState.tasks];
+            const updatedTasks = [ ...prevState.tasks ];
 
-            updatedTasks[id] = tasks[0];
+            updatedTasks[ id ] = tasks[ 0 ];
 
             return { tasks: sortTasksByGroup(updatedTasks) };
         });
@@ -127,9 +127,9 @@ export default class Scheduler extends Component {
             this._toggleSpinner(true);
             const { tasks } = this.state;
 
-            await api.deleteTask(tasks[id].id);
+            await api.deleteTask(tasks[ id ].id);
             this.setState((prevState) => {
-                const newTasks = [...prevState.tasks];
+                const newTasks = [ ...prevState.tasks ];
 
                 newTasks.splice(id, 1);
 
@@ -141,10 +141,10 @@ export default class Scheduler extends Component {
     };
 
     _toggleTaskField = (id) => (field) => () => {
-        const task = { ...this.state.tasks[id] };
+        const task = { ...this.state.tasks[ id ] };
 
-        task[field] = !this.state.tasks[id][field];
-        this._updateTaskAsync(id, [task]);
+        task[ field ] = !this.state.tasks[ id ][ field ];
+        this._updateTaskAsync(id, [ task ]);
     };
 
     _completeAllTasks = () => {
@@ -186,11 +186,9 @@ export default class Scheduler extends Component {
                         </form>
                         <FlipMove delay = { 100 } typeName = 'ul'>
                             {tasks
-                                .filter((task) =>
-                                    task.message
-                                        .toLowerCase()
-                                        .includes(tasksFilter.toLowerCase())
-                                )
+                                .filter((task) => task.message
+                                    .toLowerCase()
+                                    .includes(tasksFilter.toLowerCase()))
                                 .map((task, id) => (
                                     <Task
                                         key = { task.id }
