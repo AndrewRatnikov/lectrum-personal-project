@@ -23,7 +23,6 @@ export default class Scheduler extends Component {
     };
 
     componentDidMount () {
-        console.log(this.props);
         this._fetchTasksAsync();
     }
 
