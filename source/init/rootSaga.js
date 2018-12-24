@@ -2,9 +2,8 @@
 import { all } from 'redux-saga/effects';
 
 // Watchers
+import { watchTasks } from '../bus/tasks/saga/watchers';
 
 export function* rootSaga () {
-    yield all([
-        // TODO: add saga
-    ]);
+    yield all([ watchTasks() ]);
 }

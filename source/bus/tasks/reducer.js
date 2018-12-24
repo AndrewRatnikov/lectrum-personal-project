@@ -2,11 +2,11 @@ import { handleActions } from 'redux-actions';
 
 import { fillTasks } from './actions';
 
-const initialState = { tasks: []};
+const initialState = [];
 
 export const tasksReducer = handleActions(
     {
-        [ fillTasks ]: (state, action) => ({ ...state, tasks: action.payload }),
+        [ fillTasks ]: (state, action) => ({ ...state, ...action.payload }),
     },
     initialState
 );
