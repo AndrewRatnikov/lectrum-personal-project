@@ -1,26 +1,25 @@
 // Core
-import React, { Component } from 'react';
-import FlipMove from 'react-flip-move';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import FlipMove from "react-flip-move";
+import { connect } from "react-redux";
 
 // Instruments
-import Styles from './styles.m.css';
-import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
-import { sortTasksByGroup, checkLengthHigherFifty } from '../../instruments';
+import Styles from "./styles.m.css";
+import { sortTasksByGroup, checkLengthHigherFifty } from "../../instruments";
 import {
     fetchTasksAsync,
     createTaskAsync,
     deleteTaskAsync,
     updateTaskAsync
-} from '../../bus/tasks/actions';
+} from "../../bus/tasks/actions";
 
 // Components
-import Checkbox from '../../theme/assets/Checkbox';
-import Task from '../Task';
-import Spinner from '../Spinner';
+import Checkbox from "../../theme/assets/Checkbox";
+import Task from "../Task";
+import Spinner from "../Spinner";
 
 const mapStateToProps = (state) => ({
-    fetching: state.getIn([ 'ui', 'isFetching' ]),
+    fetching: state.getIn(["ui", "isFetching"]),
     tasks:    sortTasksByGroup(state),
 });
 
@@ -37,8 +36,8 @@ const mapDispatchToProps = {
 )
 export default class Scheduler extends Component {
     state = {
-        newTaskMessage: '',
-        tasksFilter:    '',
+        newTaskMessage: "",
+        tasksFilter:    "",
         tasks:          [],
     };
 
@@ -70,9 +69,8 @@ export default class Scheduler extends Component {
             return;
         }
 
-        // this._createTaskAsync();
         this.props.createTaskAsync({ message });
-        this.setState({ newTaskMessage: '' });
+        this.setState({ newTaskMessage: "" });
     };
 
     // _createTaskAsync = async () => {
@@ -93,12 +91,12 @@ export default class Scheduler extends Component {
 
     _saveEditTask = (id) => (message) => {
         const { tasks } = this.props;
-        const task = { ...tasks[ id ] };
+        const task = { ...tasks[id] };
 
         task.message = message;
 
         // this._updateTaskAsync(id, [ task ]);
-        this.props.updateTaskAsync([ task ]);
+        this.props.updateTaskAsync([task]);
     };
 
     // _updateTaskAsync = async (id, tasks) => {
@@ -118,9 +116,9 @@ export default class Scheduler extends Component {
 
     _updateOneTask = (id, tasks) => {
         this.setState((prevState) => {
-            const updatedTasks = [ ...prevState.tasks ];
+            const updatedTasks = [...prevState.tasks];
 
-            updatedTasks[ id ] = tasks[ 0 ];
+            updatedTasks[id] = tasks[0];
 
             return { tasks: sortTasksByGroup(updatedTasks) };
         });
@@ -131,35 +129,16 @@ export default class Scheduler extends Component {
     };
 
     _deleteTask = (id) => () => {
-        // this._deleteTaskAsync(id);
         const { tasks } = this.props;
 
-        this.props.deleteTaskAsync(tasks[ id ].id);
+        this.props.deleteTaskAsync(tasks[id].id);
     };
 
-    // _deleteTaskAsync = async (id) => {
-    //     try {
-    //         this._toggleSpinner(true);
-    //         const { tasks } = this.state;
-
-    //         await api.deleteTask(tasks[ id ].id);
-    //         this.setState((prevState) => {
-    //             const newTasks = [ ...prevState.tasks ];
-
-    //             newTasks.splice(id, 1);
-
-    //             return { tasks: newTasks };
-    //         });
-    //     } finally {
-    //         this._toggleSpinner(false);
-    //     }
-    // };
-
     _toggleTaskField = (id) => (field) => () => {
-        const task = { ...this.state.tasks[ id ] };
+        const task = { ...this.state.tasks[id] };
 
-        task[ field ] = !this.state.tasks[ id ][ field ];
-        this._updateTaskAsync(id, [ task ]);
+        task[field] = !this.state.tasks[id][field];
+        this._updateTaskAsync(id, [task]);
     };
 
     _completeAllTasks = () => {
@@ -202,18 +181,24 @@ export default class Scheduler extends Component {
                         </form>
                         <FlipMove delay = { 100 } typeName = 'ul'>
                             {tasks
-                                .filter((task) => task.message
-                                    .toLowerCase()
-                                    .includes(tasksFilter.toLowerCase()))
+                                .filter((task) =>
+                                    task
+                                        .get("message")
+                                        .toLowerCase()
+                                        .includes(tasksFilter.toLowerCase())
+                                )
                                 .map((task, id) => (
                                     <Task
-                                        key = { task.id }
+                                        completed = { task.get("completed") }
+                                        favorite = { task.get("favorite") }
+                                        id = { task.get("id") }
+                                        key = { task.get("id") }
+                                        message = { task.get("message") }
                                         onCheckedHandler = { this._toggleTaskField(
                                             id
                                         ) }
                                         onDeleteHandler = { this._deleteTask(id) }
                                         onSaveHandler = { this._saveEditTask(id) }
-                                        { ...task }
                                     />
                                 ))}
                         </FlipMove>
