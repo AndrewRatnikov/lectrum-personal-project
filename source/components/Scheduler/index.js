@@ -7,7 +7,11 @@ import { connect } from 'react-redux';
 import Styles from './styles.m.css';
 import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 import { sortTasksByGroup, checkLengthHigherFifty } from '../../instruments';
-import { fetchTasksAsync, createTaskAsync } from '../../bus/tasks/actions';
+import {
+    fetchTasksAsync,
+    createTaskAsync,
+    deleteTaskAsync
+} from '../../bus/tasks/actions';
 
 // Components
 import Checkbox from '../../theme/assets/Checkbox';
@@ -19,7 +23,11 @@ const mapStateToProps = (state) => ({
     tasks:    sortTasksByGroup(state.tasks),
 });
 
-const mapDispatchToProps = { fetchTasksAsync, createTaskAsync };
+const mapDispatchToProps = {
+    fetchTasksAsync,
+    createTaskAsync,
+    deleteTaskAsync,
+};
 
 @connect(
     mapStateToProps,
@@ -134,26 +142,29 @@ export default class Scheduler extends Component {
     };
 
     _deleteTask = (id) => () => {
-        this._deleteTaskAsync(id);
+        // this._deleteTaskAsync(id);
+        const { tasks } = this.props;
+
+        this.props.deleteTaskAsync(tasks[ id ].id);
     };
 
-    _deleteTaskAsync = async (id) => {
-        try {
-            this._toggleSpinner(true);
-            const { tasks } = this.state;
+    // _deleteTaskAsync = async (id) => {
+    //     try {
+    //         this._toggleSpinner(true);
+    //         const { tasks } = this.state;
 
-            await api.deleteTask(tasks[ id ].id);
-            this.setState((prevState) => {
-                const newTasks = [ ...prevState.tasks ];
+    //         await api.deleteTask(tasks[ id ].id);
+    //         this.setState((prevState) => {
+    //             const newTasks = [ ...prevState.tasks ];
 
-                newTasks.splice(id, 1);
+    //             newTasks.splice(id, 1);
 
-                return { tasks: newTasks };
-            });
-        } finally {
-            this._toggleSpinner(false);
-        }
-    };
+    //             return { tasks: newTasks };
+    //         });
+    //     } finally {
+    //         this._toggleSpinner(false);
+    //     }
+    // };
 
     _toggleTaskField = (id) => (field) => () => {
         const task = { ...this.state.tasks[ id ] };

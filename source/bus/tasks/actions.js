@@ -4,7 +4,9 @@ import {
     FETCH_TASKS_ASYNC,
     FILL_TASKS,
     CREATE_TASK_ASYNC,
-    ADD_TASK
+    ADD_TASK,
+    DELETE_TASK_ASYNC,
+    DELETE_TASK
 } from './constants';
 
 export const fetchTasksAsync = createAction(FETCH_TASKS_ASYNC);
@@ -17,3 +19,7 @@ export const createTaskAsync = createAction(
 );
 
 export const addTask = createAction(ADD_TASK, (message) => message);
+
+export const deleteTaskAsync = createAction(DELETE_TASK_ASYNC, (id) => id);
+
+export const deleteTask = createAction(DELETE_TASK);
