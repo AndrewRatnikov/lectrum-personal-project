@@ -10,7 +10,8 @@ import { sortTasksByGroup, checkLengthHigherFifty } from '../../instruments';
 import {
     fetchTasksAsync,
     createTaskAsync,
-    deleteTaskAsync
+    deleteTaskAsync,
+    updateTaskAsync
 } from '../../bus/tasks/actions';
 
 // Components
@@ -27,6 +28,7 @@ const mapDispatchToProps = {
     fetchTasksAsync,
     createTaskAsync,
     deleteTaskAsync,
+    updateTaskAsync,
 };
 
 @connect(
@@ -104,28 +106,29 @@ export default class Scheduler extends Component {
     // };
 
     _saveEditTask = (id) => (message) => {
-        const { tasks } = this.state;
+        const { tasks } = this.props;
         const task = { ...tasks[ id ] };
 
         task.message = message;
 
-        this._updateTaskAsync(id, [ task ]);
+        // this._updateTaskAsync(id, [ task ]);
+        this.props.updateTaskAsync([ task ]);
     };
 
-    _updateTaskAsync = async (id, tasks) => {
-        try {
-            this._toggleSpinner(true);
-            const changedTasks = await api.updateTask(tasks);
+    // _updateTaskAsync = async (id, tasks) => {
+    //     try {
+    //         this._toggleSpinner(true);
+    //         const changedTasks = await api.updateTask(tasks);
 
-            if (Number.isInteger(id)) {
-                this._updateOneTask(id, changedTasks);
-            } else {
-                this._updateAllTask(changedTasks);
-            }
-        } finally {
-            this._toggleSpinner(false);
-        }
-    };
+    //         if (Number.isInteger(id)) {
+    //             this._updateOneTask(id, changedTasks);
+    //         } else {
+    //             this._updateAllTask(changedTasks);
+    //         }
+    //     } finally {
+    //         this._toggleSpinner(false);
+    //     }
+    // };
 
     _updateOneTask = (id, tasks) => {
         this.setState((prevState) => {
