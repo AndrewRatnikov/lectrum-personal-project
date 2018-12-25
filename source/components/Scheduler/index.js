@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import Styles from './styles.m.css';
 import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 import { sortTasksByGroup, checkLengthHigherFifty } from '../../instruments';
-import { fetchTasksAsync } from '../../bus/tasks/actions';
+import { fetchTasksAsync, createTaskAsync } from '../../bus/tasks/actions';
 
 // Components
 import Checkbox from '../../theme/assets/Checkbox';
@@ -16,10 +16,10 @@ import Spinner from '../Spinner';
 
 const mapStateToProps = (state) => ({
     fetching: state.ui.isFetching,
-    tasks:    state.tasks,
+    tasks:    sortTasksByGroup(state.tasks),
 });
 
-const mapDispatchToProps = { fetchTasksAsync };
+const mapDispatchToProps = { fetchTasksAsync, createTaskAsync };
 
 @connect(
     mapStateToProps,
@@ -30,7 +30,6 @@ export default class Scheduler extends Component {
         newTaskMessage: '',
         tasksFilter:    '',
         tasks:          [],
-        fetching:       false,
     };
 
     componentDidMount () {
@@ -40,16 +39,16 @@ export default class Scheduler extends Component {
 
     _toggleSpinner = (show) => this.setState({ fetching: show });
 
-    _fetchTasksAsync = async () => {
-        try {
-            this._toggleSpinner(true);
-            const tasks = await api.fetchTasks();
+    // _fetchTasksAsync = async () => {
+    //     try {
+    //         this._toggleSpinner(true);
+    //         const tasks = await api.fetchTasks();
 
-            this.setState({ tasks: sortTasksByGroup(tasks) });
-        } finally {
-            this._toggleSpinner(false);
-        }
-    };
+    //         this.setState({ tasks: sortTasksByGroup(tasks) });
+    //     } finally {
+    //         this._toggleSpinner(false);
+    //     }
+    // };
 
     _updateTasksFilter = (event) => {
         const { value } = event.target;
@@ -69,30 +68,32 @@ export default class Scheduler extends Component {
 
     _createTask = (event) => {
         event.preventDefault();
-        const { newTaskMessage } = this.state;
+        const { newTaskMessage: message } = this.state;
 
-        if (!newTaskMessage.length) {
+        if (!message.length) {
             return;
         }
 
-        this._createTaskAsync();
+        // this._createTaskAsync();
+        this.props.createTaskAsync({ message });
+        this.setState({ newTaskMessage: '' });
     };
 
-    _createTaskAsync = async () => {
-        try {
-            this._toggleSpinner(true);
-            const { newTaskMessage: message } = this.state;
-            const task = await api.createTask({ message });
+    // _createTaskAsync = async () => {
+    //     try {
+    //         this._toggleSpinner(true);
+    //         const { newTaskMessage: message } = this.state;
+    //         const task = await api.createTask({ message });
 
-            this.setState((prevState) => {
-                const tasks = [ task, ...prevState.tasks ];
+    //         this.setState((prevState) => {
+    //             const tasks = [ task, ...prevState.tasks ];
 
-                return { tasks: sortTasksByGroup(tasks), newTaskMessage: '' };
-            });
-        } finally {
-            this._toggleSpinner(false);
-        }
-    };
+    //             return { tasks: sortTasksByGroup(tasks), newTaskMessage: '' };
+    //         });
+    //     } finally {
+    //         this._toggleSpinner(false);
+    //     }
+    // };
 
     _saveEditTask = (id) => (message) => {
         const { tasks } = this.state;
@@ -173,7 +174,8 @@ export default class Scheduler extends Component {
     };
 
     render () {
-        const { tasksFilter, newTaskMessage, tasks, fetching } = this.state;
+        const { tasksFilter, newTaskMessage } = this.state;
+        const { fetching, tasks } = this.props;
 
         return (
             <section className = { Styles.scheduler }>
