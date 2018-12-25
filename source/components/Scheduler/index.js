@@ -7,13 +7,24 @@ import { connect } from 'react-redux';
 import Styles from './styles.m.css';
 import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 import { sortTasksByGroup, checkLengthHigherFifty } from '../../instruments';
+import { fetchTasksAsync } from '../../bus/tasks/actions';
 
 // Components
 import Checkbox from '../../theme/assets/Checkbox';
 import Task from '../Task';
 import Spinner from '../Spinner';
 
-@connect((state) => ({ fetching: state.ui.isFetching }))
+const mapStateToProps = (state) => ({
+    fetching: state.ui.isFetching,
+    tasks:    state.tasks,
+});
+
+const mapDispatchToProps = { fetchTasksAsync };
+
+@connect(
+    mapStateToProps,
+    mapDispatchToProps
+)
 export default class Scheduler extends Component {
     state = {
         newTaskMessage: '',
@@ -23,7 +34,8 @@ export default class Scheduler extends Component {
     };
 
     componentDidMount () {
-        this._fetchTasksAsync();
+        this.props.fetchTasksAsync();
+        // this._fetchTasksAsync();
     }
 
     _toggleSpinner = (show) => this.setState({ fetching: show });

@@ -12,14 +12,9 @@ export function* fetchTasksAsync () {
 
         const response = yield call(api.fetchTasks);
 
-        if (response.status !== 200) {
-            throw new Error('users were not fetched.');
-        }
-
-        const tasks = yield call(response, response.json);
-
-        yield put(fillTasks(tasks));
+        yield put(fillTasks(response));
     } catch (error) {
+        console.log(error);
         yield put(emitError(error, 'fetchTasksAsync'));
     } finally {
         yield put(stopFetching());
