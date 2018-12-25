@@ -1,8 +1,11 @@
+// core
 import { handleActions } from 'redux-actions';
+import { fromJS, List } from 'immutable';
 
+// instruments
 import { fillTasks, addTask, deleteTask, upadteTask } from './actions';
 
-const initialState = [];
+const initialState = List();
 
 export const tasksReducer = handleActions(
     {

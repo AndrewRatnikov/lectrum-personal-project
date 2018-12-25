@@ -20,7 +20,9 @@ export const sortTasksByDate = (tasks) => {
     });
 };
 
-export const sortTasksByGroup = (tasks) => {
+export const sortTasksByGroup = (state) => {
+    console.log(state);
+    const tasks = state.get('tasks');
     const favorite = tasks.filter((task) => task.favorite && !task.completed);
     const usual = tasks.filter((task) => !task.favorite && !task.completed);
     const completed = sortTasksByDate(tasks.filter((task) => task.completed));

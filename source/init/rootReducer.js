@@ -1,5 +1,5 @@
 // Core
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-immutable';
 
 // Reducers
 import { uiReducer as ui } from '../bus/ui/reducer';

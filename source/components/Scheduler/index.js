@@ -20,8 +20,8 @@ import Task from '../Task';
 import Spinner from '../Spinner';
 
 const mapStateToProps = (state) => ({
-    fetching: state.ui.isFetching,
-    tasks:    sortTasksByGroup(state.tasks),
+    fetching: state.getIn([ 'ui', 'isFetching' ]),
+    tasks:    sortTasksByGroup(state),
 });
 
 const mapDispatchToProps = {
@@ -44,21 +44,7 @@ export default class Scheduler extends Component {
 
     componentDidMount () {
         this.props.fetchTasksAsync();
-        // this._fetchTasksAsync();
     }
-
-    _toggleSpinner = (show) => this.setState({ fetching: show });
-
-    // _fetchTasksAsync = async () => {
-    //     try {
-    //         this._toggleSpinner(true);
-    //         const tasks = await api.fetchTasks();
-
-    //         this.setState({ tasks: sortTasksByGroup(tasks) });
-    //     } finally {
-    //         this._toggleSpinner(false);
-    //     }
-    // };
 
     _updateTasksFilter = (event) => {
         const { value } = event.target;
