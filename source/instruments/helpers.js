@@ -8,10 +8,14 @@ export function getDisplayName (WrappedComponent) {
 
 export const sortTasksByDate = (tasks) => {
     return tasks.sort((task1, task2) => {
-        if (moment(task1.created).unix() < moment(task2.created).unix()) {
+        if (
+            moment(task1.get('created')).unix()
+            < moment(task2.get('created')).unix()
+        ) {
             return 1;
         } else if (
-            moment(task1.created).unix() > moment(task2.created).unix()
+            moment(task1.get('created')).unix()
+            > moment(task2.get('created')).unix()
         ) {
             return -1;
         }
@@ -22,27 +26,33 @@ export const sortTasksByDate = (tasks) => {
 
 export const sortTasksByGroup = (state) => {
     const tasks = state.get('tasks');
-    const favorite = tasks.filter((task) => task.favorite && !task.completed);
-    const usual = tasks.filter((task) => !task.favorite && !task.completed);
-    const completed = sortTasksByDate(tasks.filter((task) => task.completed));
 
-    const sortedCompleted = [
-        ...completed.sort((task1, task2) => {
-            if (task1.favorite && !task2.favorite) {
-                return -1;
-            } else if (!task1.favorite && task2.favorite) {
-                return 1;
-            }
+    const favorite = tasks.filter(
+        (task) => task.get('favorite') && !task.get('completed')
+    );
+    const usual = tasks.filter(
+        (task) => !task.get('favorite') && !task.get('completed')
+    );
+    const completed = sortTasksByDate(
+        tasks.filter((task) => task.get('completed'))
+    );
 
-            return 0;
-        })
-    ];
+    const sortedCompleted = completed.sort((task1, task2) => {
+        if (task1.get('favorite') && !task2.get('favorite')) {
+            return -1;
+        } else if (!task1.get('favorite') && task2.get('favorite')) {
+            return 1;
+        }
 
-    return [
-        ...sortTasksByDate(favorite),
-        ...sortTasksByDate(usual),
-        ...sortedCompleted
-    ];
+        return 0;
+    });
+
+    const result = sortTasksByDate(favorite).concat(
+        sortTasksByDate(usual),
+        sortedCompleted
+    );
+
+    return result;
 };
 
 export class BaseTaskModel {

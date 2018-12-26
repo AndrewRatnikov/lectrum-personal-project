@@ -1,25 +1,26 @@
 // Core
-import React, { Component } from "react";
-import FlipMove from "react-flip-move";
-import { connect } from "react-redux";
+import React, { Component } from 'react';
+import FlipMove from 'react-flip-move';
+import { connect } from 'react-redux';
+import { List } from 'immutable';
 
 // Instruments
-import Styles from "./styles.m.css";
-import { sortTasksByGroup, checkLengthHigherFifty } from "../../instruments";
+import Styles from './styles.m.css';
+import { sortTasksByGroup, checkLengthHigherFifty } from '../../instruments';
 import {
     fetchTasksAsync,
     createTaskAsync,
     deleteTaskAsync,
     updateTaskAsync
-} from "../../bus/tasks/actions";
+} from '../../bus/tasks/actions';
 
 // Components
-import Checkbox from "../../theme/assets/Checkbox";
-import Task from "../Task";
-import Spinner from "../Spinner";
+import Checkbox from '../../theme/assets/Checkbox';
+import Task from '../Task';
+import Spinner from '../Spinner';
 
 const mapStateToProps = (state) => ({
-    fetching: state.getIn(["ui", "isFetching"]),
+    fetching: state.getIn([ 'ui', 'isFetching' ]),
     tasks:    sortTasksByGroup(state),
 });
 
@@ -36,9 +37,8 @@ const mapDispatchToProps = {
 )
 export default class Scheduler extends Component {
     state = {
-        newTaskMessage: "",
-        tasksFilter:    "",
-        tasks:          [],
+        newTaskMessage: '',
+        tasksFilter:    '',
     };
 
     componentDidMount () {
@@ -70,55 +70,24 @@ export default class Scheduler extends Component {
         }
 
         this.props.createTaskAsync({ message });
-        this.setState({ newTaskMessage: "" });
+        this.setState({ newTaskMessage: '' });
     };
-
-    // _createTaskAsync = async () => {
-    //     try {
-    //         this._toggleSpinner(true);
-    //         const { newTaskMessage: message } = this.state;
-    //         const task = await api.createTask({ message });
-
-    //         this.setState((prevState) => {
-    //             const tasks = [ task, ...prevState.tasks ];
-
-    //             return { tasks: sortTasksByGroup(tasks), newTaskMessage: '' };
-    //         });
-    //     } finally {
-    //         this._toggleSpinner(false);
-    //     }
-    // };
 
     _saveEditTask = (id) => (message) => {
         const { tasks } = this.props;
-        const task = { ...tasks[id] };
+        const task = tasks.get(id);
 
-        task.message = message;
+        const updatedTask = task.update('message', () => message);
+        const updatedTasks = List([ updatedTask ]);
 
-        // this._updateTaskAsync(id, [ task ]);
-        this.props.updateTaskAsync([task]);
+        this.props.updateTaskAsync(updatedTasks.toJSON());
     };
-
-    // _updateTaskAsync = async (id, tasks) => {
-    //     try {
-    //         this._toggleSpinner(true);
-    //         const changedTasks = await api.updateTask(tasks);
-
-    //         if (Number.isInteger(id)) {
-    //             this._updateOneTask(id, changedTasks);
-    //         } else {
-    //             this._updateAllTask(changedTasks);
-    //         }
-    //     } finally {
-    //         this._toggleSpinner(false);
-    //     }
-    // };
 
     _updateOneTask = (id, tasks) => {
         this.setState((prevState) => {
-            const updatedTasks = [...prevState.tasks];
+            const updatedTasks = [ ...prevState.tasks ];
 
-            updatedTasks[id] = tasks[0];
+            updatedTasks[ id ] = tasks[ 0 ];
 
             return { tasks: sortTasksByGroup(updatedTasks) };
         });
@@ -128,17 +97,18 @@ export default class Scheduler extends Component {
         this.setState({ tasks: sortTasksByGroup(tasks) });
     };
 
-    _deleteTask = (id) => () => {
+    _deleteTask = (index) => () => {
         const { tasks } = this.props;
+        const id = tasks.getIn([ index, 'id' ]);
 
-        this.props.deleteTaskAsync(tasks[id].id);
+        this.props.deleteTaskAsync(id);
     };
 
     _toggleTaskField = (id) => (field) => () => {
-        const task = { ...this.state.tasks[id] };
+        const task = { ...this.state.tasks[ id ] };
 
-        task[field] = !this.state.tasks[id][field];
-        this._updateTaskAsync(id, [task]);
+        task[ field ] = !this.state.tasks[ id ][ field ];
+        this._updateTaskAsync(id, [ task ]);
     };
 
     _completeAllTasks = () => {
@@ -181,19 +151,17 @@ export default class Scheduler extends Component {
                         </form>
                         <FlipMove delay = { 100 } typeName = 'ul'>
                             {tasks
-                                .filter((task) =>
-                                    task
-                                        .get("message")
-                                        .toLowerCase()
-                                        .includes(tasksFilter.toLowerCase())
-                                )
+                                .filter((task) => task
+                                    .get('message')
+                                    .toLowerCase()
+                                    .includes(tasksFilter.toLowerCase()))
                                 .map((task, id) => (
                                     <Task
-                                        completed = { task.get("completed") }
-                                        favorite = { task.get("favorite") }
-                                        id = { task.get("id") }
-                                        key = { task.get("id") }
-                                        message = { task.get("message") }
+                                        completed = { task.get('completed') }
+                                        favorite = { task.get('favorite') }
+                                        id = { task.get('id') }
+                                        key = { task.get('id') }
+                                        message = { task.get('message') }
                                         onCheckedHandler = { this._toggleTaskField(
                                             id
                                         ) }
