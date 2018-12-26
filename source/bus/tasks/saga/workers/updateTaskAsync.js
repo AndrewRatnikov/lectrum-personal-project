@@ -10,7 +10,7 @@ export function* updateTasksAsync (action) {
     try {
         yield put(startFetching());
 
-        const response = yield call(api.updateTask, action.payload);
+        const response = yield call(api.updateTask, action.payload.toJSON());
 
         yield put(upadteTask(response));
     } catch (error) {

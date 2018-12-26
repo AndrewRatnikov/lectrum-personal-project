@@ -1,26 +1,26 @@
 // Core
-import React, { Component } from 'react';
-import FlipMove from 'react-flip-move';
-import { connect } from 'react-redux';
-import { List } from 'immutable';
+import React, { Component } from "react";
+import FlipMove from "react-flip-move";
+import { connect } from "react-redux";
+import { List } from "immutable";
 
 // Instruments
-import Styles from './styles.m.css';
-import { sortTasksByGroup, checkLengthHigherFifty } from '../../instruments';
+import Styles from "./styles.m.css";
+import { sortTasksByGroup, checkLengthHigherFifty } from "../../instruments";
 import {
     fetchTasksAsync,
     createTaskAsync,
     deleteTaskAsync,
     updateTaskAsync
-} from '../../bus/tasks/actions';
+} from "../../bus/tasks/actions";
 
 // Components
-import Checkbox from '../../theme/assets/Checkbox';
-import Task from '../Task';
-import Spinner from '../Spinner';
+import Checkbox from "../../theme/assets/Checkbox";
+import Task from "../Task";
+import Spinner from "../Spinner";
 
 const mapStateToProps = (state) => ({
-    fetching: state.getIn([ 'ui', 'isFetching' ]),
+    fetching: state.getIn(["ui", "isFetching"]),
     tasks:    sortTasksByGroup(state),
 });
 
@@ -37,8 +37,8 @@ const mapDispatchToProps = {
 )
 export default class Scheduler extends Component {
     state = {
-        newTaskMessage: '',
-        tasksFilter:    '',
+        newTaskMessage: "",
+        tasksFilter:    "",
     };
 
     componentDidMount () {
@@ -70,46 +70,43 @@ export default class Scheduler extends Component {
         }
 
         this.props.createTaskAsync({ message });
-        this.setState({ newTaskMessage: '' });
+        this.setState({ newTaskMessage: "" });
     };
 
     _saveEditTask = (id) => (message) => {
         const { tasks } = this.props;
         const task = tasks.get(id);
 
-        const updatedTask = task.update('message', () => message);
-        const updatedTasks = List([ updatedTask ]);
+        const updatedTask = task.update("message", () => message);
 
-        this.props.updateTaskAsync(updatedTasks.toJSON());
-    };
-
-    _updateAllTask = (tasks) => {
-        this.setState({ tasks: sortTasksByGroup(tasks) });
+        this.props.updateTaskAsync(List([updatedTask]));
     };
 
     _deleteTask = (index) => () => {
         const { tasks } = this.props;
-        const id = tasks.getIn([ index, 'id' ]);
+        const id = tasks.getIn([index, "id"]);
 
         this.props.deleteTaskAsync(id);
     };
 
     _toggleTaskField = (id) => (field) => () => {
-        const task = { ...this.state.tasks[ id ] };
+        const { tasks, updateTaskAsync: _updateTaskAsync } = this.props;
+        const task = tasks.get(id);
 
-        task[ field ] = !this.state.tasks[ id ][ field ];
-        this._updateTaskAsync(id, [ task ]);
+        const updatedTask = task.update(field, (value) => !value);
+
+        _updateTaskAsync(List([updatedTask]));
     };
 
     _completeAllTasks = () => {
-        const { tasks } = this.state;
-        const updatedTasks = tasks.map((item) => {
-            item.completed = true;
+        const { tasks, updateTaskAsync: _updateTaskAsync } = this.props;
+        const updatedTasks = tasks
+            .filter((item) => !item.get("completed"))
+            .map((item) => {
+                return item.update("completed", () => true);
+            });
 
-            return item;
-        });
-
-        this._updateTaskAsync(null, updatedTasks);
+        _updateTaskAsync(updatedTasks);
     };
 
     render () {
@@ -141,17 +138,19 @@ export default class Scheduler extends Component {
                         </form>
                         <FlipMove delay = { 100 } typeName = 'ul'>
                             {tasks
-                                .filter((task) => task
-                                    .get('message')
-                                    .toLowerCase()
-                                    .includes(tasksFilter.toLowerCase()))
+                                .filter((task) =>
+                                    task
+                                        .get("message")
+                                        .toLowerCase()
+                                        .includes(tasksFilter.toLowerCase())
+                                )
                                 .map((task, id) => (
                                     <Task
-                                        completed = { task.get('completed') }
-                                        favorite = { task.get('favorite') }
-                                        id = { task.get('id') }
-                                        key = { task.get('id') }
-                                        message = { task.get('message') }
+                                        completed = { task.get("completed") }
+                                        favorite = { task.get("favorite") }
+                                        id = { task.get("id") }
+                                        key = { task.get("id") }
+                                        message = { task.get("message") }
                                         onCheckedHandler = { this._toggleTaskField(
                                             id
                                         ) }
