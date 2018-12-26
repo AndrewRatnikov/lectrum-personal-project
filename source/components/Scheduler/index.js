@@ -83,16 +83,6 @@ export default class Scheduler extends Component {
         this.props.updateTaskAsync(updatedTasks.toJSON());
     };
 
-    _updateOneTask = (id, tasks) => {
-        this.setState((prevState) => {
-            const updatedTasks = [ ...prevState.tasks ];
-
-            updatedTasks[ id ] = tasks[ 0 ];
-
-            return { tasks: sortTasksByGroup(updatedTasks) };
-        });
-    };
-
     _updateAllTask = (tasks) => {
         this.setState({ tasks: sortTasksByGroup(tasks) });
     };
