@@ -1,5 +1,6 @@
 // core
 import { put, call } from 'redux-saga/effects';
+import { fromJS } from 'immutable';
 
 //instruments
 import { api } from '../../../../REST/index';
@@ -12,7 +13,7 @@ export function* fetchTasksAsync () {
 
         const response = yield call(api.fetchTasks);
 
-        yield put(fillTasks(response));
+        yield put(fillTasks(fromJS(response)));
     } catch (error) {
         console.log(error);
         yield put(emitError(error, 'fetchTasksAsync'));
