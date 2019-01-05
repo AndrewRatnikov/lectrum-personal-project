@@ -58,6 +58,10 @@ export default class Task extends PureComponent {
                     ? prevState.message
                     : this.props.message;
 
+                if (message !== this.props.message) {
+                    this._updateTask();
+                }
+
                 return {
                     editing: !prevState.editing,
                     message,
@@ -118,7 +122,7 @@ export default class Task extends PureComponent {
 
     render () {
         const { onCheckedHandler, onDeleteHandler } = this.props;
-        const { completed, favorite, editing } = this.state;
+        const { completed, favorite, editing, message } = this.state;
 
         return (
             <li className = { Styles.task }>
@@ -134,7 +138,7 @@ export default class Task extends PureComponent {
                         disabled = { !editing }
                         ref = { this.taskRef }
                         type = 'text'
-                        value = { this.state.message }
+                        value = { message }
                         onChange = { this._editTaskHandler }
                         onKeyDown = { this._updateTaskHandler }
                     />
