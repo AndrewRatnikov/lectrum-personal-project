@@ -44,6 +44,18 @@ class Tasks {
             this.stopFetching();
         }
     }
+
+    @action
+    async deleteTask (task) {
+        try {
+            this.startFetching();
+            await api.deleteTask(task.id);
+
+            this.tasks.remove(task);
+        } finally {
+            this.stopFetching();
+        }
+    }
 }
 
 export default new Tasks();

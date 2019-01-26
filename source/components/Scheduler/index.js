@@ -127,26 +127,29 @@ export default class Scheduler extends Component {
     };
 
     _deleteTask = (id) => () => {
-        this._deleteTaskAsync(id);
+        const { sortedTasks } = this.props.tasksStore;
+
+        this.props.tasksStore.deleteTask(sortedTasks[id]);
+        // this._deleteTaskAsync(id);
     };
 
-    _deleteTaskAsync = async (id) => {
-        try {
-            this._showSpinner();
-            const { tasks } = this.state;
+    // _deleteTaskAsync = async (id) => {
+    //     try {
+    //         this._showSpinner();
+    //         const { tasks } = this.state;
 
-            await api.deleteTask(tasks[id].id);
-            this.setState((prevState) => {
-                const newTasks = [...prevState.tasks];
+    //         await api.deleteTask(tasks[id].id);
+    //         this.setState((prevState) => {
+    //             const newTasks = [...prevState.tasks];
 
-                newTasks.splice(id, 1);
+    //             newTasks.splice(id, 1);
 
-                return { tasks: newTasks };
-            });
-        } finally {
-            this._hideSpinner();
-        }
-    };
+    //             return { tasks: newTasks };
+    //         });
+    //     } finally {
+    //         this._hideSpinner();
+    //     }
+    // };
 
     _toggleTaskField = (id) => (field) => () => {
         const task = { ...this.state.tasks[id] };
