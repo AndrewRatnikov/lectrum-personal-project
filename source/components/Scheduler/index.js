@@ -159,13 +159,6 @@ export default class Scheduler extends Component {
 
         this._updateTaskAsync(null, updatedTasks);
 
-        // this.setState((prevState) => ({
-        //     tasks: prevState.tasks.map((item) => {
-        //         item.completed = true;
-
-        //         return item;
-        //     }),
-        // }));
     };
 
     render () {
