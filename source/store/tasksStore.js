@@ -1,8 +1,9 @@
 // Core
-import { observable, action } from "mobx";
+import { observable, action, computed } from "mobx";
 
 // Instruments
 import { api } from "../REST";
+import { sortTasksByGroup } from "../instruments/helpers";
 
 class Tasks {
     @observable fetching = false;
@@ -13,6 +14,11 @@ class Tasks {
     }
     stopFetching () {
         this.fetching = false;
+    }
+
+    @computed
+    get sortedTasks () {
+        return sortTasksByGroup(this.tasks);
     }
 
     @action

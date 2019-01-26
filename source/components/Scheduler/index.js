@@ -1,6 +1,7 @@
 // Core
 import React, { Component } from "react";
 import FlipMove from "react-flip-move";
+import { inject, observer } from "mobx-react";
 
 // Instruments
 import Styles from "./styles.m.css";
@@ -12,6 +13,8 @@ import Checkbox from "../../theme/assets/Checkbox";
 import Task from "../Task";
 import Spinner from "../Spinner";
 
+@inject("tasksStore")
+@observer
 export default class Scheduler extends Component {
     state = {
         newTaskMessage: "",
@@ -21,23 +24,24 @@ export default class Scheduler extends Component {
     };
 
     componentDidMount () {
-        this._fetchTasksAsync();
+        // this._fetchTasksAsync();
+        this.props.tasksStore.fetchTasks();
     }
 
-    _showSpinner = () => this.setState({ fetching: true });
+    // _showSpinner = () => this.setState({ fetching: true });
 
-    _hideSpinner = () => this.setState({ fetching: false });
+    // _hideSpinner = () => this.setState({ fetching: false });
 
-    _fetchTasksAsync = async () => {
-        try {
-            this._showSpinner();
-            const tasks = await api.fetchTasks();
+    // _fetchTasksAsync = async () => {
+    //     try {
+    //         this._showSpinner();
+    //         const tasks = await api.fetchTasks();
 
-            this.setState({ tasks: sortTasksByGroup(tasks) });
-        } finally {
-            this._hideSpinner();
-        }
-    };
+    //         this.setState({ tasks: sortTasksByGroup(tasks) });
+    //     } finally {
+    //         this._hideSpinner();
+    //     }
+    // };
 
     _updateTasksFilter = (event) => {
         const { value } = event.target;
@@ -158,11 +162,11 @@ export default class Scheduler extends Component {
         });
 
         this._updateTaskAsync(null, updatedTasks);
-
     };
 
     render () {
-        const { tasksFilter, newTaskMessage, tasks, fetching } = this.state;
+        const { tasksFilter, newTaskMessage } = this.state;
+        const { fetching, sortedTasks } = this.props.tasksStore;
 
         return (
             <section className = { Styles.scheduler }>
@@ -188,7 +192,7 @@ export default class Scheduler extends Component {
                             <button disabled = { fetching }>Add task</button>
                         </form>
                         <FlipMove delay = { 100 } typeName = 'ul'>
-                            {tasks
+                            {sortedTasks
                                 .filter((task) =>
                                     task.message
                                         .toLowerCase()
