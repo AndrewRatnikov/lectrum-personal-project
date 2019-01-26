@@ -32,6 +32,18 @@ class Tasks {
             this.stopFetching();
         }
     }
+
+    @action
+    async createTask (message) {
+        try {
+            this.startFetching();
+            const task = await api.createTask({ message });
+
+            this.tasks.push(task);
+        } finally {
+            this.stopFetching();
+        }
+    }
 }
 
 export default new Tasks();
