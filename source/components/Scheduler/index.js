@@ -5,8 +5,7 @@ import { inject, observer } from "mobx-react";
 
 // Instruments
 import Styles from "./styles.m.css";
-import { api } from "../../REST"; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
-import { sortTasksByGroup, checkLengthHigherFifty } from "../../instruments";
+import { checkLengthHigherFifty } from "../../instruments";
 
 // Components
 import Checkbox from "../../theme/assets/Checkbox";
@@ -24,24 +23,8 @@ export default class Scheduler extends Component {
     };
 
     componentDidMount () {
-        // this._fetchTasksAsync();
         this.props.tasksStore.fetchTasks();
     }
-
-    // _showSpinner = () => this.setState({ fetching: true });
-
-    // _hideSpinner = () => this.setState({ fetching: false });
-
-    // _fetchTasksAsync = async () => {
-    //     try {
-    //         this._showSpinner();
-    //         const tasks = await api.fetchTasks();
-
-    //         this.setState({ tasks: sortTasksByGroup(tasks) });
-    //     } finally {
-    //         this._hideSpinner();
-    //     }
-    // };
 
     _updateTasksFilter = (event) => {
         const { value } = event.target;
@@ -67,104 +50,34 @@ export default class Scheduler extends Component {
             return;
         }
 
-        // this._createTaskAsync();
         this.props.tasksStore.createTask(newTaskMessage);
         this.setState({ newTaskMessage: "" });
     };
 
-    // _createTaskAsync = async () => {
-    //     try {
-    //         this._showSpinner();
-    //         const { newTaskMessage: message } = this.state;
-    //         const task = await api.createTask({ message });
-
-    //         this.setState((prevState) => {
-    //             const tasks = [task, ...prevState.tasks];
-
-    //             return { tasks: sortTasksByGroup(tasks), newTaskMessage: "" };
-    //         });
-    //     } finally {
-    //         this._hideSpinner();
-    //     }
-    // };
-
     _saveEditTask = (id) => (message) => {
-        // const { tasks } = this.state;
         const { sortedTasks: tasks } = this.props.tasksStore;
         const task = { ...tasks[id] };
 
         task.message = message;
 
-        // this._updateTaskAsync(id, [task]);
         this.props.tasksStore.updateTask([task]);
     };
-
-    // _updateTaskAsync = async (id, tasks) => {
-    //     try {
-    //         this._showSpinner();
-    //         const changedTasks = await api.updateTask(tasks);
-
-    //         if (Number.isInteger(id)) {
-    //             this._updateOneTask(id, changedTasks);
-    //         } else {
-    //             this._updateAllTask(changedTasks);
-    //         }
-    //     } finally {
-    //         this._hideSpinner();
-    //     }
-    // };
-
-    // _updateOneTask = (id, tasks) => {
-    //     this.setState((prevState) => {
-    //         const updatedTasks = [...prevState.tasks];
-
-    //         updatedTasks[id] = tasks[0];
-
-    //         return { tasks: sortTasksByGroup(updatedTasks) };
-    //     });
-    // };
-
-    // _updateAllTask = (tasks) => {
-    //     this.setState({ tasks: sortTasksByGroup(tasks) });
-    // };
 
     _deleteTask = (id) => () => {
         const { sortedTasks } = this.props.tasksStore;
 
         this.props.tasksStore.deleteTask(sortedTasks[id]);
-        // this._deleteTaskAsync(id);
     };
-
-    // _deleteTaskAsync = async (id) => {
-    //     try {
-    //         this._showSpinner();
-    //         const { tasks } = this.state;
-
-    //         await api.deleteTask(tasks[id].id);
-    //         this.setState((prevState) => {
-    //             const newTasks = [...prevState.tasks];
-
-    //             newTasks.splice(id, 1);
-
-    //             return { tasks: newTasks };
-    //         });
-    //     } finally {
-    //         this._hideSpinner();
-    //     }
-    // };
 
     _toggleTaskField = (id) => (field) => () => {
         const { sortedTasks: tasks } = this.props.tasksStore;
         const task = { ...tasks[id] };
 
-        // task[field] = !this.state.tasks[id][field];
         task[field] = !tasks[id][field];
-        // this._updateTaskAsync(id, [task]);
         this.props.tasksStore.updateTask([task]);
     };
 
     _completeAllTasks = () => {
-        // const { tasks } = this.state;
         const { sortedTasks: tasks } = this.props.tasksStore;
         const updatedTasks = tasks.map((item) => {
             item.completed = true;
@@ -172,7 +85,6 @@ export default class Scheduler extends Component {
             return item;
         });
 
-        // this._updateTaskAsync(null, updatedTasks);
         this.props.tasksStore.updateTask(updatedTasks);
     };
 
