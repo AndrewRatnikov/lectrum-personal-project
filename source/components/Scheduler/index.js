@@ -89,42 +89,44 @@ export default class Scheduler extends Component {
     // };
 
     _saveEditTask = (id) => (message) => {
-        const { tasks } = this.state;
+        // const { tasks } = this.state;
+        const { sortedTasks: tasks } = this.props.tasksStore;
         const task = { ...tasks[id] };
 
         task.message = message;
 
-        this._updateTaskAsync(id, [task]);
+        // this._updateTaskAsync(id, [task]);
+        this.props.tasksStore.updateTask([task]);
     };
 
-    _updateTaskAsync = async (id, tasks) => {
-        try {
-            this._showSpinner();
-            const changedTasks = await api.updateTask(tasks);
+    // _updateTaskAsync = async (id, tasks) => {
+    //     try {
+    //         this._showSpinner();
+    //         const changedTasks = await api.updateTask(tasks);
 
-            if (Number.isInteger(id)) {
-                this._updateOneTask(id, changedTasks);
-            } else {
-                this._updateAllTask(changedTasks);
-            }
-        } finally {
-            this._hideSpinner();
-        }
-    };
+    //         if (Number.isInteger(id)) {
+    //             this._updateOneTask(id, changedTasks);
+    //         } else {
+    //             this._updateAllTask(changedTasks);
+    //         }
+    //     } finally {
+    //         this._hideSpinner();
+    //     }
+    // };
 
-    _updateOneTask = (id, tasks) => {
-        this.setState((prevState) => {
-            const updatedTasks = [...prevState.tasks];
+    // _updateOneTask = (id, tasks) => {
+    //     this.setState((prevState) => {
+    //         const updatedTasks = [...prevState.tasks];
 
-            updatedTasks[id] = tasks[0];
+    //         updatedTasks[id] = tasks[0];
 
-            return { tasks: sortTasksByGroup(updatedTasks) };
-        });
-    };
+    //         return { tasks: sortTasksByGroup(updatedTasks) };
+    //     });
+    // };
 
-    _updateAllTask = (tasks) => {
-        this.setState({ tasks: sortTasksByGroup(tasks) });
-    };
+    // _updateAllTask = (tasks) => {
+    //     this.setState({ tasks: sortTasksByGroup(tasks) });
+    // };
 
     _deleteTask = (id) => () => {
         const { sortedTasks } = this.props.tasksStore;
@@ -152,21 +154,26 @@ export default class Scheduler extends Component {
     // };
 
     _toggleTaskField = (id) => (field) => () => {
-        const task = { ...this.state.tasks[id] };
+        const { sortedTasks: tasks } = this.props.tasksStore;
+        const task = { ...tasks[id] };
 
-        task[field] = !this.state.tasks[id][field];
-        this._updateTaskAsync(id, [task]);
+        // task[field] = !this.state.tasks[id][field];
+        task[field] = !tasks[id][field];
+        // this._updateTaskAsync(id, [task]);
+        this.props.tasksStore.updateTask([task]);
     };
 
     _completeAllTasks = () => {
-        const { tasks } = this.state;
+        // const { tasks } = this.state;
+        const { sortedTasks: tasks } = this.props.tasksStore;
         const updatedTasks = tasks.map((item) => {
             item.completed = true;
 
             return item;
         });
 
-        this._updateTaskAsync(null, updatedTasks);
+        // this._updateTaskAsync(null, updatedTasks);
+        this.props.tasksStore.updateTask(updatedTasks);
     };
 
     render () {

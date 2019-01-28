@@ -56,6 +56,26 @@ class Tasks {
             this.stopFetching();
         }
     }
+
+    @action
+    async updateTask (tasks) {
+        try {
+            this.startFetching();
+            const changedTasks = await api.updateTask(tasks);
+
+            if (changedTasks.length === 1) {
+                const taskId = changedTasks[0].id;
+
+                this.tasks = this.tasks.map(
+                    (item) => item.id === taskId ? changedTasks[0] : item
+                );
+            } else {
+                this.tasks.replace(changedTasks);
+            }
+        } finally {
+            this.stopFetching();
+        }
+    }
 }
 
 export default new Tasks();
