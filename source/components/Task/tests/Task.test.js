@@ -36,6 +36,11 @@ const spies = {
     _getTaskShapeSpy:      jest.spyOn(result.instance(), "_getTaskShape"),
     _updateTaskSpy:        jest.spyOn(result.instance(), "_updateTask"),
     _cancelEditingTaskSpy: jest.spyOn(result.instance(), "_cancelEditingTask"),
+    taskInputRefFocusSpy:  jest.spyOn(
+        result.instance().taskRef.current,
+        "focus"
+    ),
+    onCheckedHandlerSpy: jest.spyOn(result.props(), "onCheckedHandler"),
 };
 
 afterEach(() => {
@@ -181,6 +186,49 @@ describe("Component Task", () => {
                     "function"
                 );
             });
+            test("set value from props in message when message in state is empty", () => {
+                result.setState({ message: "" });
+                result.instance()._toggleEditCreatedTask();
+                expect(result.state("message")).toBe(baseTaskModel.message);
+            });
+            test("must update editing state", () => {
+                result.setState({ editing: true });
+                expect(result.state("editing")).toBeTruthy();
+                result.instance()._toggleEditCreatedTask();
+                expect(result.state("editing")).toBeFalsy();
+            });
+            test("when message is new must called _updateTask", () => {
+                result.setState({ message: "updated task" });
+                result.instance()._toggleEditCreatedTask();
+                expect(spies._updateTaskSpy).toBeCalled();
+            });
+            test("must set focus on input field when start editing", () => {
+                result.instance()._toggleEditCreatedTask();
+                expect(spies.taskInputRefFocusSpy).toBeCalled();
+            });
+        });
+        describe("_editTaskHandler", () => {
+            test("to be defined", () => {
+                expect(typeof result.instance()._editTaskHandler).toBe(
+                    "function"
+                );
+            });
+            test("message in state must be updated", () => {
+                result
+                    .instance()
+                    ._editTaskHandler({ target: { value: "new task" }});
+                expect(result.state("message")).toBe("new task");
+            });
+            test("must do not updated state when message length > 50", () => {
+                result.instance()._editTaskHandler({
+                    target: {
+                        value:
+                            "new task with long long long long long long long long long long long long long long long string",
+                    },
+                });
+                expect(result.state("message")).toBe(baseTaskModel.message);
+            });
         });
     });
+    describe("must implement bissness logic", () => {});
 });
