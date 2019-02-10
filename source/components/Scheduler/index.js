@@ -1,5 +1,6 @@
 // Core
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import FlipMove from "react-flip-move";
 import { connect } from "react-redux";
 import { List } from "immutable";
@@ -36,6 +37,15 @@ const mapDispatchToProps = {
     mapDispatchToProps
 )
 export default class Scheduler extends Component {
+    static propTypes = {
+        createTaskAsync: PropTypes.func.isRequired,
+        deleteTaskAsync: PropTypes.func.isRequired,
+        fetching:        PropTypes.bool.isRequired,
+        fetchTasksAsync: PropTypes.func.isRequired,
+        tasks:           PropTypes.arrayOf(PropTypes.object).isRequired,
+        updateTaskAsync: PropTypes.func.isRequired,
+    };
+
     state = {
         newTaskMessage: "",
         tasksFilter:    "",
