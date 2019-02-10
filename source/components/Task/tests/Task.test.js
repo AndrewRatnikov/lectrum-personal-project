@@ -2,6 +2,7 @@ import React from "react";
 import { mount } from "enzyme";
 
 import Task from "../index";
+import Remove from "../../../theme/assets/Remove";
 
 const mocks = {
     onCheckedHandler: jest.fn(),
@@ -33,14 +34,21 @@ const props = {
 const result = mount(<Task { ...props } />);
 
 const spies = {
-    _getTaskShapeSpy:      jest.spyOn(result.instance(), "_getTaskShape"),
-    _updateTaskSpy:        jest.spyOn(result.instance(), "_updateTask"),
-    _cancelEditingTaskSpy: jest.spyOn(result.instance(), "_cancelEditingTask"),
-    taskInputRefFocusSpy:  jest.spyOn(
+    _getTaskShapeSpy:       jest.spyOn(result.instance(), "_getTaskShape"),
+    _updateTaskSpy:         jest.spyOn(result.instance(), "_updateTask"),
+    _editTaskHandlerSpy:    jest.spyOn(result.instance(), "_editTaskHandler"),
+    _updateTaskHandlerSpy:  jest.spyOn(result.instance(), "_updateTaskHandler"),
+    _cancelEditingTaskSpy:  jest.spyOn(result.instance(), "_cancelEditingTask"),
+    _toggleEditCreatedTask: jest.spyOn(
+        result.instance(),
+        "_toggleEditCreatedTask"
+    ),
+    taskInputRefFocusSpy: jest.spyOn(
         result.instance().taskRef.current,
         "focus"
     ),
     onCheckedHandlerSpy: jest.spyOn(result.props(), "onCheckedHandler"),
+    onDeleteHandlerSpy:  jest.spyOn(result.props(), "onDeleteHandler"),
 };
 
 afterEach(() => {
@@ -230,5 +238,32 @@ describe("Component Task", () => {
             });
         });
     });
-    describe("must implement bissness logic", () => {});
+    describe("must implement bisiness logic", () => {
+        test("click on Checkbox must call onCheckedHandler", () => {
+            result.find("div.toggleTaskCompletedState").simulate("click");
+            expect(spies.onCheckedHandlerSpy).toHaveBeenCalled();
+        });
+        test("click on Star must call onCheckedHandler", () => {
+            result.find("div.toggleTaskFavoriteState").simulate("click");
+            expect(spies.onCheckedHandlerSpy).toHaveBeenCalled();
+        });
+        test("click on Edit must call _toggleEditCreatedTask", () => {
+            result.find("div.updateTaskMessageOnClick").simulate("click");
+            expect(spies.onCheckedHandlerSpy).toHaveBeenCalled();
+        });
+        test("click on Remove must call onDeleteHandler", () => {
+            result.find(Remove).simulate("click");
+            expect(spies.onCheckedHandlerSpy).toHaveBeenCalled();
+        });
+        test("input change must call _editTaskHandler", () => {
+            result
+                .find("input")
+                .simulate("change", { target: { value: "Test" }});
+            expect(spies._editTaskHandlerSpy).toHaveBeenCalled();
+        });
+        test("keydown in input must call _updateTaskHandler", () => {
+            result.find("input").simulate("keyDown");
+            expect(spies._updateTaskHandlerSpy).toHaveBeenCalled();
+        });
+    });
 });
